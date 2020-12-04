@@ -42,7 +42,7 @@ public class Frame extends JFrame implements ActionListener {
         edit.addActionListener(this);
         container.add(edit);
        container.add(sum);
-        container.add(sum);
+         sum.addActionListener(this);
         pack();
     }
 
