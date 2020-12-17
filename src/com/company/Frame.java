@@ -1,83 +1,71 @@
 package com.company;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.File;
-import java.io.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.*;
 
-public abstract class Series {
-    protected double first;
-    protected double step;
-    protected double n;
+public class Frame extends JFrame implements ActionListener {
+    protected static JLabel empty = new JLabel("");
+    private JButton show = new JButton("Show");
+    private JButton edit = new JButton("Input series");
+    private JButton sum = new JButton("Sum");
+    private JButton save = new JButton("Save in output.txt");
+    private JRadioButton but1 = new JRadioButton("Liner");
+    private JRadioButton but2 = new JRadioButton("Exponential");
+    private Liner a;
+    private Exponential b;
 
-    public Series() {
-        this.first = 0;
-        this.step = 0;
-        this.n = 0;
+    public Frame(String title, Liner a, Exponential b) {
+        super(title);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(true);
+        setVisible(true);
+        this.a = a;
+        this.b = b;
+
+        Container container = this.getContentPane();
+        container.setLayout(new GridLayout(2, 2));
+        ButtonGroup group = new ButtonGroup();
+        group.add(but1);
+        group.add(but2);
+        container.add(but1);
+        but1.setSelected(true);
+        container.add(but2);
+        container.add(save);
+        save.addActionListener(this);
+        show.addActionListener(this);
+        container.add(show);
+        edit.addActionListener(this);
+        container.add(edit);
+        container.add(sum);
+        sum.addActionListener(this);
+        pack();
     }
 
-    public double getFirst() {
-        return first;
-    }
-
-    public double getStep() {
-        return step;
-    }
-
-    public double getN() {
-        return n;
-    }
-
-    public void setFirst(double first) {
-        this.first = first;
-    }
-
-    public void setStep(double step) {
-        this.step = step;
-    }
-
-    public void setN(double n) {
-        this.n = n;
-    }
-
-    public Series(double first, double step, double n) {
-        this.first = first;
-        this.step = step;
-        this.n = n;
-    }
-
-    abstract double solve(int j);
-
-    double sum() {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
-            sum += solve(i);
-        return sum;
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer s = new StringBuffer();
-        for (int i = 0; i < n; i++)
-            s.append(solve(i) + " ");
-        return s.toString();
-    }
-    void save()  {
-
-        String s=this.toString();
-        double summa=this.sum();
-
-        try(FileOutputStream fos=new FileOutputStream("output.txt");
-            PrintStream printStream = new PrintStream(fos))
-        {
-            printStream.println(s);
-            printStream.println("Sum= "+ summa);
-            System.out.println("Запись произведена в output.txt");
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == show) {
+            String title = but1.isSelected() ? but1.getText() : but2.getText();
+            String message = but1.isSelected() ? a.toString() : b.toString();
+            JOptionPane.showMessageDialog(this, message, title, JOptionPane.PLAIN_MESSAGE);
+        } else if (e.getSource() == edit)
+            new Dialog(this, but1.isSelected() ? but1.getText() : but2.getText(), but1.isSelected() ? a : b);
+        else if (e.getSource() == sum) {
+            StringBuffer s1 = new StringBuffer();
+            StringBuffer s2 = new StringBuffer();
+            s1.append(a.sum());
+            s2.append(b.sum());
+            String message = but1.isSelected() ? s1.toString() : s2.toString();
+            String title = but1.isSelected() ? but1.getText() : but2.getText();
+            JOptionPane.showMessageDialog(this, message, title, JOptionPane.PLAIN_MESSAGE);
         }
-        catch(IOException ex){
+        else if (e.getSource() == save) {
 
-            System.out.println(ex.getMessage());
+                if (but1.isSelected())
+                    a.save();
+                else
+                    b.save();
+
         }
-    }
- }
 
+    }
+}
 
