@@ -2,6 +2,7 @@ package com.company;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.File;
+import java.io.*;
 
 public abstract class Series {
     protected double first;
@@ -10,7 +11,6 @@ public abstract class Series {
 
     public Series() {
         this.first = 0;
-
         this.step = 0;
         this.n = 0;
     }
@@ -61,8 +61,21 @@ public abstract class Series {
             s.append(solve(i) + " ");
         return s.toString();
     }
-    void save(String filename) throws IOException {
-        PrintWriter wr = new PrintWriter(new File(filename));
-        wr.close();
+    void save()  {
+
+        String s=this.toString();
+        double summa=this.sum();
+
+        try(FileOutputStream fos=new FileOutputStream("output.txt");
+            PrintStream printStream = new PrintStream(fos))
+        {
+            printStream.println(s);
+            printStream.println("Sum= "+ summa);
+            System.out.println("Запись произведена в output.txt");
+        }
+        catch(IOException ex){
+
+            System.out.println(ex.getMessage());
+        }
     }
-}
+ }
